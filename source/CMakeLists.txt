@@ -31,6 +31,8 @@ set(CMAKE_SOURCE_FILES
  info.cpp
 )
 
+include_directories(BEFORE SYSTEM ${OPENSSL_INCLUDE_DIR})
+
 add_library(ict-static STATIC ${CMAKE_SOURCE_FILES})
 target_link_libraries(ict-static ${OPENSSL_CRYPTO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} dl)
 set_target_properties(ict-static  PROPERTIES OUTPUT_NAME ict-${LIBRARY_NAME})

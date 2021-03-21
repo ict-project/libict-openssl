@@ -34,6 +34,7 @@ case $OSTYPE in
     cmake ../source -DCMAKE_EXPORT_COMPILE_COMMANDS=YES -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCPACK_GENERATOR="TZ;TGZ;STGZ;DEB;RPM"
     ;;
   darwin* )
+    export OPENSSL_ROOT_DIR=/usr/local/opt/openssl
     cmake ../source -DCPACK_GENERATOR="TZ;TGZ;STGZ" -G Xcode -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake
     # xcodebuild -project *.xcodeproj | xcpretty -r json-compilation-database --output compile_commands.json
     echo "# In order to open project run:"
