@@ -11,7 +11,7 @@ echo "#define ${MACRO_DEF_STRING}" >> $HEADER_NAME
 
 for HEADER in $HEADER_LIST
 do
-    if [[ "$HEADER" != "test.hpp" && "$HEADER" != "git_version.h" ]]; then
+    if [[ "$HEADER" != "test.hpp" && "$HEADER" != "$HEADER_NAME" ]]; then
         echo "#include \"$HEADER\"" >> $HEADER_NAME
     fi
 done
