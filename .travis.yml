@@ -1,6 +1,5 @@
 dist: bionic
 osx_image: xcode12.2
-sudo: required
 os:
   - linux
   - osx
@@ -30,7 +29,7 @@ script:
   - make package_source
 deploy:
   provider: releases
-  api_key: "$GITHUB_API_KEY"
+  token: "$GITHUB_API_KEY"
   file_glob: true
   file: 
    - "build/libict-*.tar.Z"
@@ -38,6 +37,5 @@ deploy:
    - "build/libict-*.sh"
    - "build/libict-*.deb"
    - "build/libict-*.rpm"
-  skip_cleanup: true
   on:
     tags: true
