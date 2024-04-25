@@ -1,9 +1,7 @@
 //! @file
 //! @brief OpenSSL hash module - header file.
 //! @author Mariusz Ornowski (mariusz.ornowski@ict-project.pl)
-//! @version 1.0
-//! @date 2012-2021
-//! @copyright ICT-Project Mariusz Ornowski (ict-project.pl)
+//!
 /* **************************************************************
 Copyright (c) 2012-2021, ICT-Project Mariusz Ornowski (ict-project.pl)
 All rights reserved.
@@ -42,29 +40,31 @@ namespace ict { namespace  hash {
 //===========================================
 //! Typy hash'y.
 enum type_t {
-    md2,
+    blake2b512,
+    blake2s256,
     md4,
     md5,
     md5_sha1,
-    blake2b512,
-    blake2s256,
+    ripemd,
+    ripemd160,
+    rmd160,
     sha1,
     sha224,
     sha256,
-    sha384,
-    sha512,
-    sha512_224,
-    sha512_256,
     sha3_224,
     sha3_256,
     sha3_384,
     sha3_512,
+    sha384,
+    sha512,
+    sha512_224,
+    sha512_256,
     shake128,
     shake256,
-    mdc2,
-    ripemd160,
-    whirlpool,
     sm3,
+    ssl3_md5,
+    ssl3_sha1,
+    whirlpool,
     error
 };
 

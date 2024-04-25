@@ -46,9 +46,19 @@ using EVP_CIPHER_CTX_free_ptr=std::unique_ptr<EVP_CIPHER_CTX,decltype(&::EVP_CIP
 #define ICT_OPENSSL_NO_CCM
 #define ICT_OPENSSL_NO_GCM
 #define ICT_OPENSSL_NO_XTS
+
+#define OPENSSL_NO_DES
+#define OPENSSL_NO_RC4
+#define OPENSSL_NO_RC2
+#define OPENSSL_NO_BF
+#define OPENSSL_NO_CAST
+#define OPENSSL_NO_SEED
+#define OPENSSL_NO_AES_CBC_HMAC
+
 #ifndef OPENSSL_NO_OCB
 #define OPENSSL_NO_OCB
 #endif
+
 #define EVP_CIPHER_TRANSLATE(type) case type: return(EVP_##type());
 const EVP_CIPHER * translate(type_t type){
     switch(type){
@@ -181,10 +191,12 @@ const EVP_CIPHER * translate(type_t type){
         #ifndef OPENSSL_NO_OCB
         EVP_CIPHER_TRANSLATE(aes_256_ocb)
         #endif
+        #ifndef OPENSSL_NO_AES_CBC_HMAC
         EVP_CIPHER_TRANSLATE(aes_128_cbc_hmac_sha1)
         EVP_CIPHER_TRANSLATE(aes_256_cbc_hmac_sha1)
         EVP_CIPHER_TRANSLATE(aes_128_cbc_hmac_sha256)
         EVP_CIPHER_TRANSLATE(aes_256_cbc_hmac_sha256)
+        #endif
         #ifndef OPENSSL_NO_ARIA
         EVP_CIPHER_TRANSLATE(aria_128_ecb)
         EVP_CIPHER_TRANSLATE(aria_128_cbc)

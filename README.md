@@ -1,4 +1,4 @@
-# OpenSSL C++ wrapper [![Build Status](https://travis-ci.org/ict-project/libict-openssl.svg?branch=main)](https://travis-ci.org/ict-project/libict-openssl)
+# OpenSSL C++ wrapper
 
 This code implements a simple OpenSSL C++ wrapper.
 
@@ -7,7 +7,7 @@ See:
 * [cipher](source/cipher.md) for more details about cipher functions.
 
 Releases:
-* Branch release-v1 [![Build Status](https://travis-ci.org/ict-project/libict-openssl.svg?branch=release-v1)](https://travis-ci.org/ict-project/libict-openssl)
+* Branch release-v1 
 
 ## Building instructions
 

@@ -1,11 +1,9 @@
 //! @file
 //! @brief OpenSSL hash module - Source file.
 //! @author Mariusz Ornowski (mariusz.ornowski@ict-project.pl)
-//! @version 1.0
-//! @date 2012-2021
-//! @copyright ICT-Project Mariusz Ornowski (ict-project.pl)
+//!
 /* **************************************************************
-Copyright (c) 2012-2021, ICT-Project Mariusz Ornowski (ict-project.pl)
+Copyright (c) 2012-2024, ICT-Project Mariusz Ornowski (ict-project.pl)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,6 +35,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "local.h"
 #include <stdexcept>
 #include <set>
+#include <map>
+#include <string>
 #include <openssl/md2.h>
 #include <openssl/md4.h>
 #include <openssl/md5.h>
@@ -47,6 +47,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //============================================
 namespace ict { namespace  hash { 
 //============================================
+typedef std::map<type_t,std::string> type_map_t;
+const type_map_t type_map={
+    {blake2b512,"blake2b512"},
+    {blake2s256,"blake2s256"},
+    {md4,"md4"},
+    {md5,"md5"},
+    {md5_sha1,"md5-sha1"},
+    {ripemd,"ripemd"},
+    {ripemd160,"ripemd160"},
+    {rmd160,"rmd160"},
+    {sha1,"sha1"},
+    {sha224,"sha224"},
+    {sha256,"sha256"},
+    {sha3_224,"sha3-224"},
+    {sha3_256,"sha3-256"},
+    {sha3_384,"sha3-384"},
+    {sha3_512,"sha3-512"},
+    {sha384,"sha384"},
+    {sha512,"sha512"},
+    {sha512_224,"sha512-224"},
+    {sha512_256,"sha512-256"},
+    {shake128,"shake128"},
+    {shake256,"shake256"},
+    {sm3,"sm3"},
+    {ssl3_md5,"ssl3-md5"},
+    {ssl3_sha1,"ssl3-sha1"},
+    {whirlpool,"whirlpool"}
+};
+
 #define MINEFIELD_SIZE 1000
 class minefield{
 private:
@@ -67,6 +96,83 @@ public:
     }
 };
 
+const EVP_MD * translate(type_t type){
+    if (type_map.count(type)) return EVP_get_digestbyname(type_map.at(type).c_str());  
+    return(nullptr);
+}
+struct context_t {
+    EVP_MD_CTX * context;
+    context_t():context(EVP_MD_CTX_new()){}
+    context_t(const EVP_MD_CTX * in):context(EVP_MD_CTX_new()){
+        if (in){
+            if (!EVP_MD_CTX_copy_ex(context,in)){
+                throw std::runtime_error("Context copy failed!!!");
+            }
+        }
+    }
+    void sanity() const {
+        if (!context) {
+            throw std::runtime_error("Context is null!!!");
+        }
+    }
+    ~context_t(){EVP_MD_CTX_free(context);}
+};
+class implementation: public interface, private context_t{
+private:
+    const ict::hash::type_t t;
+    const EVP_MD * md;
+    void sanity() const {
+        context_t::sanity();
+        if (!md) {
+            throw std::runtime_error("Digest is null!!!");
+        }
+    }
+public:
+    implementation(ict::hash::type_t t_):t(t_),md(translate(t_)){
+    }
+    void init(){
+        sanity();
+        if (!EVP_DigestInit_ex2(context,md,NULL)){
+            throw std::runtime_error("Init failed!!!");
+        }
+    }
+    void update(const ict::safe::string & input){
+        sanity();
+        if (!EVP_DigestUpdate(context,input.c_str(),input.size())) {
+            throw std::runtime_error("Update failed!!!");
+        }
+    }
+    void final(ict::safe::string & output) const {
+        unsigned char md_value[EVP_MAX_MD_SIZE];
+        unsigned int md_len;
+        context_t tmp(context);
+        sanity();
+        if (!EVP_DigestFinal_ex(tmp.context,md_value,&md_len)){
+            throw std::runtime_error("Final failed!!!");
+        }
+        output.assign((const char*)md_value,md_len);
+        ::memset(&md_value,std::rand()%0x100,EVP_MAX_MD_SIZE);
+        ::memset(&md_len,std::rand()%0x100,sizeof(md_len));
+    }
+    ict::hash::type_t type() const{
+        return(t);
+    }
+    interface *clone() const{
+        implementation * out=new implementation(t);
+        if (out) {
+            if (!EVP_MD_CTX_copy_ex(out->context,context)) {
+                throw std::runtime_error("Context copy failed!!!");
+            }
+        }
+        return(out);
+    }
+};
+
+interface *interface::factory(type_t type){
+    return(new implementation(type));
+}
+
+/*
 #define EVP_MD_TRANSLATE(type) case type: return(EVP_##type());
 const EVP_MD * translate(type_t type){
     switch(type){
@@ -114,7 +220,8 @@ const EVP_MD * translate(type_t type){
     return(nullptr);
 }
 #undef EVP_MD_TRANSLATE
-
+*/
+/*
 template <typename Context,int Init(Context*),int Update(Context*,const void*,size_t),int Final(unsigned char *,Context*),size_t Length> class implementation: public interface{
 private:
     const ict::hash::type_t t;
@@ -204,7 +311,7 @@ interface *interface::factory(type_t type){
     }
     return(nullptr);
 }
-
+*/
 value::value(type_t hash_type):iface(interface::factory(hash_type)){
     if (iface) iface->init();
 }
@@ -325,16 +432,31 @@ REGISTER_TEST(hash,tc_##type){ \
     return(0); \
 }
 
-EVP_MD_TEST(md2)
-EVP_MD_TEST(md4)
+EVP_MD_TEST(blake2b512)
+EVP_MD_TEST(blake2s256)
+//EVP_MD_TEST(md4)
 EVP_MD_TEST(md5)
+EVP_MD_TEST(md5_sha1)
+//EVP_MD_TEST(ripemd)
+//EVP_MD_TEST(ripemd160)
+//EVP_MD_TEST(rmd160)
 EVP_MD_TEST(sha1)
 EVP_MD_TEST(sha224)
 EVP_MD_TEST(sha256)
+EVP_MD_TEST(sha3_224)
+EVP_MD_TEST(sha3_256)
+EVP_MD_TEST(sha3_384)
+EVP_MD_TEST(sha3_512)
 EVP_MD_TEST(sha384)
 EVP_MD_TEST(sha512)
-EVP_MD_TEST(ripemd160)
-EVP_MD_TEST(whirlpool)
+EVP_MD_TEST(sha512_224)
+EVP_MD_TEST(sha512_256)
+EVP_MD_TEST(shake128)
+EVP_MD_TEST(shake256)
+EVP_MD_TEST(sm3)
+EVP_MD_TEST(ssl3_md5)
+EVP_MD_TEST(ssl3_sha1)
+//EVP_MD_TEST(whirlpool)
 
 #endif
 //===========================================

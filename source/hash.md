@@ -82,13 +82,23 @@ inline ict::safe::string digest(const ict::safe::string & input,type_t hash_type
 
 *Remark: It depends on OpenSSL version.* 
 
-* `ict::hash::md2`
-* `ict::hash::md4`
+* `ict::hash::blake2b512`
+* `ict::hash::blake2s256`
 * `ict::hash::md5`
+* `ict::hash::md5_sha1`
 * `ict::hash::sha1`
 * `ict::hash::sha224`
 * `ict::hash::sha256`
+* `ict::hash::sha3_224`
+* `ict::hash::sha3_256`
+* `ict::hash::sha3_384`
+* `ict::hash::sha3_512`
 * `ict::hash::sha384`
 * `ict::hash::sha512`
-* `ict::hash::ripemd160`
-* `ict::hash::whirlpool`
+* `ict::hash::sha512_224`
+* `ict::hash::sha512_256`
+* `ict::hash::shake128`
+* `ict::hash::shake256`
+* `ict::hash::sm3`
+* `ict::hash::ssl3_md5`
+* `ict::hash::ssl3_sha1`
