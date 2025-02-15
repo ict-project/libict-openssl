@@ -1,24 +1,23 @@
-all: build/.dir
-	$(MAKE) $(MFLAGS) -C build
+all: build/prefix.sh
+	./build/prefix.sh $(MAKE) $(MFLAGS) -C build
 
-clean: build/.dir
-	$(MAKE) $(MFLAGS) -C build clean
+clean: build/prefix.sh
+	./build/prefix.sh $(MAKE) $(MFLAGS) -C build clean
 
-install: build/.dir
-	$(MAKE) $(MFLAGS) -C build install
+install: build/prefix.sh
+	./build/prefix.sh $(MAKE) $(MFLAGS) -C build install
 
-uninstall: build/.dir
-	$(MAKE) $(MFLAGS) -C build uninstall
+uninstall: build/prefix.sh
+	./build/prefix.sh $(MAKE) $(MFLAGS) -C build uninstall
 
-test: build/.dir
-	$(MAKE) $(MFLAGS) -C build test
+test: build/prefix.sh
+	./build/prefix.sh $(MAKE) $(MFLAGS) -C build test
 
-package: build/.dir
-	$(MAKE) $(MFLAGS) -C build package
+package: build/prefix.sh
+	./build/prefix.sh $(MAKE) $(MFLAGS) -C build package
 
-package_source: build/.dir
-	$(MAKE) $(MFLAGS) -C build package_source
+package_source: build/prefix.sh
+	./build/prefix.sh $(MAKE) $(MFLAGS) -C build package_source
 
-build/.dir:
-	test -d build || ./build.bsh
-	echo > build/.dir
+build/prefix.sh:
+	test -d build || ./configure.sh

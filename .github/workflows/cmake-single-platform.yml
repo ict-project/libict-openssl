@@ -27,10 +27,6 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Dependencies
-      run: |
-        sudo apt-get install libssl-dev 
-
     - name: Version
       run: |
         git fetch --depth=100 origin
@@ -40,7 +36,11 @@ jobs:
         echo GIT_VERSION=$GIT_VERSION >> "$GITHUB_ENV"
 
     - name: Build
-      run: make
+      run: |
+        make
+        export PROJECT_NAME=$(cat ./build/project-name.txt)
+        echo PROJECT_NAME=$PROJECT_NAME
+        echo PROJECT_NAME=$PROJECT_NAME >> "$GITHUB_ENV"
 
     - name: Test
       run: make test
@@ -50,7 +50,7 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        name: package-${{ runner.os }}-${{ env.GIT_VERSION }}
+        name: ${{ env.PROJECT_NAME }}-${{ runner.os }}-${{ env.GIT_VERSION }}
         path: |
           build/libict-*.tar.Z
           build/libict-*.tar.gz

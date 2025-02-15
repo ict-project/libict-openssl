@@ -34,3 +34,5 @@
 build/**
 .vscode
 compile_commands.json
+source/info.hpp
+source/info.cpp
